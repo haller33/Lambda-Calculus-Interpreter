@@ -1,0 +1,53 @@
+# Church encoding, arithmetic
+SUCC = \n.\f.\x.f (n f x)
+ADD = \m.\n.n SUCC m
+MULTIPLY = \m.\n.\f.m (n f)
+EXP = \m.\n.n m
+PRED = \n.\f.\x.n (\g.\h.h (g f)) (\u.x) (\u.u)
+0 = \f.\x.x
+1 = SUCC 0
+2 = SUCC 1
+3 = SUCC 2
+4 = ADD 2 2
+5 = ADD 2 3
+6 = SUCC 5
+12 = MULTIPLY 3 4
+
+# Booleans
+TRUE = \a.\b.a
+FALSE = \a.\b.b
+
+# Y Combinator
+^Y = \f.(\x.f (x x))(\x.f (x x))
+
+# Recursive functions
+POSITIVE = \n.n (\x.TRUE) FALSE
+FACT = \f.\n.(POSITIVE n) (MULTIPLY n (f (PRED n))) 1
+^FACTORIAL = Y FACT
+FIB = \f.\x.(POSITIVE (PRED x)) (ADD (f (PRED x)) (f (2 PRED x))) x
+^FIBONACCI = Y FIB
+
+# Pairs and linked lists
+PAIR = \a.\b.\f.f a b
+FIRST = \p.p TRUE
+SECOND = \p.p FALSE
+
+NIL = (PAIR FALSE FALSE)
+CONS = \a.\b.PAIR TRUE (PAIR a b)
+CAR = \c.FIRST (SECOND c)
+CDR = \c.SECOND (SECOND c)
+
+# Recursive list functions
+CONSP = FIRST
+^SUM = Y \f.\l.(CONSP l) (ADD (CAR l) (f (CDR l))) 0
+^PROD = Y \f.\l.(CONSP l) (MULTIPLY (CAR l) (f (CDR l))) 1
+^LISTCAT = Y \f.\x.\y.(CONSP x) (CONS (CAR x) (f (CDR x) y)) y
+
+# Tests
+PRED 12
+FACTORIAL 3
+FIBONACCI 3
+SUM (CONS 2 (CONS 1 (CONS 2 NIL)))
+PROD (CONS 2 (CONS 1 (CONS 2 NIL)))
+SUM (LISTCAT (CONS 2 (CONS 1 NIL)) (CONS 1 (CONS 3 NIL)))
+
